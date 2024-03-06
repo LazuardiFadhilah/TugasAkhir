@@ -1,4 +1,6 @@
 'use strict';
+const {DataTypes} = require('sequelize');
+
 const {
   Model
 } = require('sequelize');
@@ -14,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Users.init({
+    id: {
+      allowNull: false,
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.UUID
+    },
     fullName: DataTypes.STRING,
     email: DataTypes.STRING,
     role: DataTypes.ENUM('Super Admin', 'Creator'),

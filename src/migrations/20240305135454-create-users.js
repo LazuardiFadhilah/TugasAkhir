@@ -31,6 +31,7 @@ module.exports = {
         type: Sequelize.ENUM('Active', 'Suspend')
       },
       avatar: {
+        
         type: Sequelize.STRING
       },
       createdAt: {

@@ -80,6 +80,44 @@ class UserController {
             return res.status(400).json({message:error.message});
         }
     }
+
+    async update(req,res){
+      
+        try {
+            const {id} = req.params;
+            const {fullName, email, newPassword, confirmNewPassword, role, status, avatar} = req.body;
+            console.log({fullName, email, newPassword, confirmNewPassword, role, status, avatar});
+            if(newPassword && confirmNewPassword == ""){
+            try {
+                const user = await Users.findOne({where:{id:id}});
+                newPassword = user.newPassword;
+                confirmNewPassword = user.confirmNewPassword;
+            } catch (error) {
+                return res.status(400).json({message:error.message});
+            }
+           }
+           if(newPassword !== confirmNewPassword){
+               return res.status(400).json({message:"Password tidak sama"});}
+            
+            const userData = await Users.update({
+                fullName,
+                email,
+                password: bcrypt.hashSync(newPassword, 10),
+                role,
+                status,
+                avatar,
+            },{where:{id:id}});
+            const job = await Users.findOne({where:{id:id}});
+            return res.json({
+                "code": 200,
+                "message": `Data berhasil diperbaharui`,
+                "data": job,
+            });
+          
+        } catch (error) {
+            return res.status(400).json({message:error.message});
+        }
+    }
 }
 
 module.exports = new UserController();

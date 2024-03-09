@@ -43,11 +43,18 @@ class UserController {
     }
 
     async showId(req, res){
-        
         try {
-            const {id} = req.params;
-            const user = await Users.findOne({where:{id:id}});
-            return res.json(user);
+            const id = req.query.id;
+            
+            const user = await Users.findOne({where:{
+                id:id,
+            }});
+            console.log(user);
+            return res.json({
+                "code": 200,
+                "message": `Data berhasil`,
+                "data": user,
+            });
         } catch (error) {
             return res.status(400).json({message:error.message});
         }
@@ -83,7 +90,7 @@ class UserController {
     async update(req,res){
       
         try {
-            const {id} = req.params;
+            const id = req.query.id;
             const {fullName, email, newPassword, confirmNewPassword, role, status, avatar} = req.body;
             console.log({fullName, email, newPassword, confirmNewPassword, role, status, avatar});
             if(newPassword && confirmNewPassword == ""){
@@ -113,6 +120,21 @@ class UserController {
                 "data": job,
             });
           
+        } catch (error) {
+            return res.status(400).json({message:error.message});
+        }
+    }
+
+    async destroy(req,res){
+        try {
+            const id = req.query.id;
+            const user = await Users.destroy({where:{id:id}});
+            return res.json({
+                "code": 200,
+                "message": `Data berhasil dihapus`,
+             
+            });
+            
         } catch (error) {
             return res.status(400).json({message:error.message});
         }

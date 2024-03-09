@@ -5,7 +5,7 @@ const auth = require('../middleware/auth.js');
 
 
 
-router.get('/', auth,userController.show);
+router.get('/', [auth()], userController.show);
 router.get('/:id', userController.showId);
 router.post('/register',userController.store);
 router.put('/:id', userController.update);

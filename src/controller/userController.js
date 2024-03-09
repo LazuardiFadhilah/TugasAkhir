@@ -8,7 +8,6 @@ const {paginate} = require("../utilites/pagination.js");
 
 class UserController {
     async show(req, res) {
-
         try {
             const limit = req.query.limit ?? 5;
             const fullName = req.query.fullName ?? "";

@@ -56,7 +56,7 @@ class UserController {
                 "data": user,
             });
         } catch (error) {
-            return res.status(400).json({message:error.message});
+            return res.status(404).json({message:'Data Not Found'});
         }
     }
 
@@ -132,6 +132,7 @@ class UserController {
             return res.json({
                 "code": 200,
                 "message": `Data berhasil dihapus`,
+                
              
             });
             

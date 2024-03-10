@@ -44,7 +44,7 @@ class UserController {
 
     async showId(req, res){
         try {
-            const id = req.query.id;
+            const id = req.params;
             
             const user = await Users.findOne({where:{
                 id:id,
@@ -90,7 +90,7 @@ class UserController {
     async update(req,res){
       
         try {
-            const id = req.query.id;
+            const id = req.params;
             const {fullName, email, newPassword, confirmNewPassword, role, status, avatar} = req.body;
             console.log({fullName, email, newPassword, confirmNewPassword, role, status, avatar});
             if(newPassword && confirmNewPassword == ""){
@@ -127,7 +127,7 @@ class UserController {
 
     async destroy(req,res){
         try {
-            const id = req.query.id;
+            const id = req.params;
             const user = await Users.destroy({where:{id:id}});
             return res.json({
                 "code": 200,

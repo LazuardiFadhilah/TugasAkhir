@@ -88,36 +88,40 @@ class AuthController {
 
     register = async (req, res) => {
         try {
-            const { fullName, email, password, role, status, avatar } = req.body;
+            const { fullName, email, password, role} = req.body;
 
             // check if email already exist
-            const isEmailExist = await User.findOne({ where: { email: email } });
+            const isEmailExist = await Users.findOne({ where: { email: email } });
             if (isEmailExist) {
                 return res.status(400).json({ message: "EMAIL_ALREADY_EXIST" });
             }
 
             // check role sudah sesuai apa belum
-            const isRoleValid = role === "Creator" || role === "Admin";
+            const isRoleValid = role === "Creator" || role === "Super Admin";
             if (!isRoleValid) {
-                return res.status(400).json({ message: "ROLE_INVALID" });
+                return res.status(400).json({ message: "Role must be Creator or Super Admin" });
             }
 
-            // check status valid
-            const isStatusValid = status === "Active" || status === "Suspend";
-            if (!isStatusValid) {
-                return res.status(400).json({ message: "STATUS_INVALID" });
-            }
+            // // check status valid
+            // const isStatusValid = status === "Active" || status === "Suspend";
+            // if (!isStatusValid) {
+            //     return res.status(400).json({ message: "STATUS_INVALID" });
+            // }
 
             // create user
-            const user = await User.create({
+            const user = await Users.create({
                 fullName: fullName,
                 email: email,
                 password: bcrypt.hashSync(password, 10),
                 role: role,
-                status: status,
-                avatar,
-
+                status: "Active",
+                avatar: null,
             });
+            return res.json({
+                "code": 201,
+                "message": `Data berhasil dibuat`,
+                "data": user,
+            })
         } catch (error) {
             return res.status(400).json({ message: error.message });
         }

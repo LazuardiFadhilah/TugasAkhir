@@ -5,5 +5,9 @@ const auth = require('../middleware/auth.js');
 const isCreator = require('../middleware/isCreator.js');
 
 router.post('/', [auth(), isCreator()], categoryController.store);
+router.get('/', categoryController.show);
+router.get('/:id', categoryController.showId);
+router.put('/:id', [auth(), isCreator()], categoryController.update);
+router.delete('/:id', [auth(), isCreator()], categoryController.destroy);
 
 module.exports = router;

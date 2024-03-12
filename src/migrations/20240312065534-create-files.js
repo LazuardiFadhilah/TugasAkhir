@@ -2,34 +2,24 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable("Files", {
       id: {
         allowNull: false,
         primaryKey: true,
         defaultValue: Sequelize.UUIDV4,
         type: Sequelize.UUID,
       },
-      fullName: {
-        allowNull: false,
+      filename: {
         type: Sequelize.STRING,
       },
-      email: {
-        allowNull: false,
+      type: {
+
         type: Sequelize.STRING,
       },
-      role: {
-        defaultValue: "Creator",
-        type: Sequelize.ENUM("Super Admin", "Creator"),
-      },
-      password: {
-        allowNull: false,
+      url: {
         type: Sequelize.STRING,
       },
-      status: {
-        defaultValue: "Active",
-        type: Sequelize.ENUM("Active", "Suspend"),
-      },
-      avatar: {
+      path: {
         type: Sequelize.STRING,
       },
       createdAt: {
@@ -46,6 +36,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable("Files");
   },
 };

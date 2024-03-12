@@ -1,6 +1,7 @@
 'use strict';
 const {DataTypes} = require('sequelize');
 
+
 const {
   Model
 } = require('sequelize');
@@ -13,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+    Users.belongsTo(models.Files, {
+      foreignKey: 'avatar',
+      as: 'Avatar',
+    })
     }
   }
   Users.init({

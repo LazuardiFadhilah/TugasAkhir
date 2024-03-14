@@ -63,8 +63,8 @@ class PostController {
       const post = await Posts.findAll({
         where: { id: id },
         include: [
-          // { model: Category, as: "Categories" },
-          { model:postcategories, as:'PostCategories',},
+          { model: Category, as: "Categories" },
+          // { model:postcategories, as:'PostCategories',},
         ],
       });
       return res.json({
@@ -181,10 +181,11 @@ class PostController {
 
       const post = await Posts.findOne({
         where: { id },
-        include: [{ model: postcategories, as: "PostCategories" }],
+        include: [
+          { model: Category, as: "Categories" },
+          ],
       });
 
-      console.log(post);
 
       if (post.title == title) {
         return res.status(400).json({ message: "title is already use" });
@@ -206,11 +207,26 @@ class PostController {
         { where: { id: id } }
       );
 
-      const result = await Posts.findOne({where:{id:id}});
+      const result = await Posts.findOne({where:{id:id}, include: [
+        { model: Category, as: "Categories" },
+        ],});
+
+      const editPostCategories = await postcategories.update(
+        {
+          categoryId,
+        },
+        {where:{id:result.Categories[0].postcategories.id}}
+      )
+
+      const newResult = await Posts.findOne({where:{id:id}, include: [
+        { model: Category, as: "Categories" },
+        ],});
+
+
       return res.json({
         code:200,
         message:"data berhasil diperbaharui",
-        data:result,
+        data:newResult,
       })
     } catch (error) {
       return res.status(400).json({ message: error.message });

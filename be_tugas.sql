@@ -4,7 +4,7 @@
 -- https://tableplus.com/
 --
 -- Database: be_tugas
--- Generation Time: 2024-03-12 22:58:43.6060
+-- Generation Time: 2024-03-14 23:10:07.8340
 -- -------------------------------------------------------------
 
 
@@ -41,18 +41,35 @@ CREATE TABLE `Files` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `postcategories`;
+CREATE TABLE `postcategories` (
+  `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `postId` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `categoryId` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `deletedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `postId` (`postId`),
+  KEY `categoryId` (`categoryId`),
+  CONSTRAINT `postcategories_ibfk_1` FOREIGN KEY (`postId`) REFERENCES `posts` (`id`),
+  CONSTRAINT `postcategories_ibfk_2` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 DROP TABLE IF EXISTS `Posts`;
 CREATE TABLE `Posts` (
   `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` text,
-  `thumbnail` varchar(255) DEFAULT NULL,
+  `thumbnail` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `status` enum('Draft','Published') DEFAULT 'Draft',
   `slug` varchar(255) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `thumbnail` (`thumbnail`),
+  CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`thumbnail`) REFERENCES `Files` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `SequelizeMeta`;
@@ -95,8 +112,19 @@ INSERT INTO `Files` (`id`, `filename`, `type`, `url`, `path`, `createdAt`, `upda
 ('c4d93335-28aa-48d7-87ac-2fa0acca2ee6', 'Screenshot 2024-03-11 at 13.38.30.png', 'image/png', 'http://localhost:3000/src/uploads/1710229294853-Screenshot 2024-03-11 at 13.38.30.png', 'src/uploads/1710229294853-Screenshot 2024-03-11 at 13.38.30.png', '2024-03-12 07:41:34', '2024-03-12 07:41:34', NULL),
 ('e768d5b3-7b82-4c50-aea3-7ee980184c34', 'Screenshot 2024-03-11 at 13.38.30 (2).png', 'image/png', 'http://localhost:3000/src/uploads/1710229460805-Screenshot 2024-03-11 at 13.38.30 (2).png', 'src/uploads/1710229460805-Screenshot 2024-03-11 at 13.38.30 (2).png', '2024-03-12 07:44:20', '2024-03-12 07:44:20', NULL);
 
+INSERT INTO `postcategories` (`id`, `postId`, `categoryId`, `createdAt`, `updatedAt`, `deletedAt`) VALUES
+('03c9167a-9b37-4836-af55-966355324fba', '7aa17c4b-cee8-4b98-abc1-ef41f1e189cf', 'a677f1df-0e32-4685-bee5-322d5f67265c', '2024-03-14 09:35:10', '2024-03-14 09:35:10', NULL),
+('50079b2d-9c1e-4542-972b-5fa39aa9bdc6', '7aa17c4b-cee8-4b98-abc1-ef41f1e189cf', 'a677f1df-0e32-4685-bee5-322d5f67265c', '2024-03-14 09:30:12', '2024-03-14 09:30:12', NULL),
+('931ef458-e0f2-4c1b-b130-dee47db3e613', '7aa17c4b-cee8-4b98-abc1-ef41f1e189cf', 'a677f1df-0e32-4685-bee5-322d5f67265c', '2024-03-14 09:30:31', '2024-03-14 09:30:31', NULL),
+('f85ad5ae-8a94-4f47-a6f6-5af279890be2', '7aa17c4b-cee8-4b98-abc1-ef41f1e189cf', 'a677f1df-0e32-4685-bee5-322d5f67265c', '2024-03-14 09:35:26', '2024-03-14 09:35:26', NULL);
+
 INSERT INTO `Posts` (`id`, `title`, `description`, `thumbnail`, `status`, `slug`, `createdAt`, `updatedAt`, `deletedAt`) VALUES
-('7aa17c4b-cee8-4b98-abc1-ef41f1e189cf', 'test first post', 'test description on first post', NULL, 'Published', 'test-first-post', '2024-03-12 06:49:20', '2024-03-12 06:49:20', NULL);
+('0a0dfd53-74d8-43c1-9aef-482b48652a74', 'test first post 3', 'test description on first post', NULL, 'Published', 'test-first-post-3', '2024-03-14 11:43:13', '2024-03-14 11:43:13', NULL),
+('7aa17c4b-cee8-4b98-abc1-ef41f1e189c2', 'test first post', 'test description on first post', 'c4d93335-28aa-48d7-87ac-2fa0acca2ee6', 'Published', 'test-first-post', '2024-03-12 06:49:20', '2024-03-12 06:49:20', '2024-03-14 08:10:46'),
+('7aa17c4b-cee8-4b98-abc1-ef41f1e189cf', 'test post baru ? update 4', 'test post baru ? description update', 'c4d93335-28aa-48d7-87ac-2fa0acca2ee6', 'Published', 'test-post-baru-update-4', '2024-03-12 06:49:20', '2024-03-14 16:07:00', NULL),
+('89c6a409-cba3-4802-81a8-98348e8d9358', 'test first post 5', 'test description on first post', NULL, 'Published', 'test-first-post-5', '2024-03-14 11:48:42', '2024-03-14 11:48:42', NULL),
+('d4baf50c-0303-48a8-b630-fd48f83355f6', 'test first post 2', 'test description on first post', NULL, 'Published', 'test-first-post-2', '2024-03-14 11:41:57', '2024-03-14 11:41:57', NULL),
+('e7815882-25c6-43c3-bb41-20f3f5d3f6e6', 'test first post 4', 'test description on first post', NULL, 'Published', 'test-first-post-4', '2024-03-14 11:43:48', '2024-03-14 11:43:48', NULL);
 
 INSERT INTO `SequelizeMeta` (`name`) VALUES
 ('20240305135454-create-users.js'),
@@ -104,7 +132,10 @@ INSERT INTO `SequelizeMeta` (`name`) VALUES
 ('20240311102321-create-category.js'),
 ('20240312065534-create-files.js'),
 ('20240312091900-change-avatar-in-users.js'),
-('20240312093148-realation-users-with-files.js');
+('20240312093148-realation-users-with-files.js'),
+('20240313140239-change-post-thumbnail-datatype.js'),
+('20240313140350-relation-post-to-file.js'),
+('20240314084419-create-postcategories.js');
 
 INSERT INTO `Users` (`id`, `fullName`, `email`, `role`, `password`, `status`, `avatar`, `createdAt`, `updatedAt`, `deletedAt`) VALUES
 ('03cc2170-2679-4ce7-80f8-1338ec5566a2', 'Ismael Mohr', 'Roy_Mohr28@hotmail.com', 'Super Admin', '$2b$10$AgHgLOm64uj6tNjHS2pdB.zP71jn/ZI7TZBBffk2DnxmAVu77fbm2', 'Active', NULL, '2024-03-09 14:41:13', '2024-03-09 14:41:13', '2024-03-09 16:28:18'),

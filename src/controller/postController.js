@@ -1,9 +1,46 @@
 const { Posts } = require("../models");
+const { Category } = require("../models");
+const { postcategories } = require("../models");
 const sequelize = require("sequelize");
 const Op = sequelize.Op;
 const slugify = require("slugify");
+const { paginate } = require("../utilites/pagination.js");
 
 class PostController {
+  async show(req, res) {
+    try {
+      const limit = req.query.limit ?? 5;
+      const title = req.query.title ?? "";
+      const page = req.query.page ?? 1;
+
+      // console.log(limit);
+
+      const post = await Posts.findAll(
+        paginate(
+          {
+            where: { title: { [Op.like]: "%" + title + "%" } },
+            include:[
+             { model:Category, as:'Categories',},
+            ]
+          },
+          {
+            page: parseInt(page),
+            pageSize: parseInt(limit),
+          }
+        )
+      );
+
+      return res.json({
+        code: 200,
+        message: `${post.length} data sudah diterima`,
+        count: post.length,
+        data: post,
+      });
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
+
   async getSlug(req, res) {
     try {
       const { slug } = req.params;
@@ -26,7 +63,7 @@ class PostController {
     try {
       const { id } = req.params;
       const post = await Posts.findAll({
-        where: { id:id },
+        where: { id: id },
       });
 
       console.log(post);
@@ -83,7 +120,48 @@ class PostController {
     }
   }
 
-  async destroy(req,res){
+  async storePostCategories(req, res) {
+    try {
+      const { postId, categoryId } = req.body;
+
+      // check postId
+      const post = await Posts.findByPk(postId);
+      if (!post) {
+        return res.status(400).json({ message: "Post not found" });
+      }
+
+      // check Category Id
+      const category = await Category.findByPk(categoryId);
+      if (!category) {
+        return res.status(400).json({ message: "Category Not Found" });
+      }
+
+      //cek jika sudah ada kategori yang sama dengan categoryId yg diinputkan
+      const isAlreadyHaveThisCategory = await postcategories.findOne({
+        where: { postId: postId, categoryId: categoryId },
+      });
+      if (isAlreadyHaveThisCategory) {
+        return res
+          .status(409)
+          .json({ message: "The category has been added." });
+      }
+
+      const postCategories = await postcategories.create({
+        postId,
+        categoryId,
+      });
+
+      return res.json({
+        code: 201,
+        message: "Data berhasil dibuat",
+        data: postCategories,
+      });
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
+
+  async destroy(req, res) {
     try {
       const { id } = req.params;
       const user = await Posts.destroy({ where: { id: id } });
@@ -95,7 +173,6 @@ class PostController {
       return res.status(400).json({ message: error.message });
     }
   }
-
 }
 
 module.exports = new PostController();

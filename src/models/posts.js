@@ -17,12 +17,18 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey:'thumbnail',
         as:'Thumbnail',
       });
+
       Posts.belongsToMany(models.Category,{
         through:'postcategories',
         unique:false,
         foreignKey:'postId',
         // as:'PostCategories',
       });
+
+      Posts.hasMany(models.postcategories, {
+        foreignKey:'postId',
+        as:'PostCategories',
+      })
     }
   }
   Posts.init({

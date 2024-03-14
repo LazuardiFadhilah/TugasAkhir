@@ -10,5 +10,6 @@ router.get('/:id', postController.getId);
 router.get('/', postController.show);   
 router.delete('/:id', [auth(), isCreator()], postController.destroy);
 router.post('/postCategories', postController.storePostCategories);
+router.put('/:id', [auth(), isCreator()], postController.update);  // update a specific blog post by
 
 module.exports = router;

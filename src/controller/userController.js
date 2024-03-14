@@ -18,6 +18,13 @@ class UserController {
         paginate(
           {
             where: { fullName: { [Op.like]: "%" + fullName + "%" } },
+            include: [
+              {
+                model: Files,
+                as: 'Avatar',
+               
+              },
+            ],
             attributes: { exclude: ["password"] },
           },
           {

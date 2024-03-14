@@ -19,9 +19,7 @@ class PostController {
         paginate(
           {
             where: { title: { [Op.like]: "%" + title + "%" } },
-            include:[
-             { model:Category, as:'Categories',},
-            ]
+            include: [{ model: Category, as: "Categories" }],
           },
           {
             page: parseInt(page),
@@ -64,6 +62,10 @@ class PostController {
       const { id } = req.params;
       const post = await Posts.findAll({
         where: { id: id },
+        include: [
+          { model: Category, as: "Categories" },
+          // { model:postcategories, as:'PostCategories',},
+        ],
       });
 
       console.log(post);
@@ -169,6 +171,47 @@ class PostController {
         code: 200,
         message: `Data berhasil dihapus`,
       });
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
+
+  async update(req, res) {
+    try {
+      const { id } = req.params;
+      const { title, description, categoryId, status } = req.body;
+
+      const post = await Posts.findOne({
+        where: { id },
+        include: [{ model: postcategories, as: "PostCategories" }],
+      });
+
+      if (post.title == title) {
+        return res.status(400).json({ message: "title is already use" });
+      }
+
+      const slug = slugify(title, {
+        replacement: "-",
+        lower: true,
+        strict: true,
+      });
+
+      const editPost = await Posts.update(
+        {
+          title,
+          description,
+          status,
+          slug,
+        },
+        { where: { id: id } }
+      );
+
+      const result = await Posts.findOne({where:{id:id}});
+      return res.json({
+        code:200,
+        message:"data berhasil diperbaharui",
+        data:result,
+      })
     } catch (error) {
       return res.status(400).json({ message: error.message });
     }

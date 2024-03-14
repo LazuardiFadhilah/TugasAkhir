@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
       Files.hasMany(models.Users,{
         foreignKey: 'avatar',
         as: 'Avatar',
+      });
+      Files.hasMany(models.Posts,{
+        foreignKey: 'thumbnail',
+        as: 'Thumbnail',
       })
     };
     

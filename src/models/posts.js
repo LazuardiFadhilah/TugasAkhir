@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Posts.belongsTo(models.Files,{
+        foreignKey:'thumbnail',
+        as:'Thumbnail',
+      });
     }
   }
   Posts.init({

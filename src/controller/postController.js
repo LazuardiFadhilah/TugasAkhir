@@ -63,12 +63,10 @@ class PostController {
       const post = await Posts.findAll({
         where: { id: id },
         include: [
-          { model: Category, as: "Categories" },
-          // { model:postcategories, as:'PostCategories',},
+          // { model: Category, as: "Categories" },
+          { model:postcategories, as:'PostCategories',},
         ],
       });
-
-      console.log(post);
       return res.json({
         code: 200,
         message: `Data sudah diterima`,
@@ -185,6 +183,8 @@ class PostController {
         where: { id },
         include: [{ model: postcategories, as: "PostCategories" }],
       });
+
+      console.log(post);
 
       if (post.title == title) {
         return res.status(400).json({ message: "title is already use" });

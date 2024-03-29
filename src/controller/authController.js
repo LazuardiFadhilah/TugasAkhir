@@ -43,7 +43,7 @@ class AuthController {
             }
 
             // generate Token
-            const { accessToken, expiresIn } = await this.generateToken(user);
+            const { accessToken, expiresIn, refreshToken } = await this.generateToken(user);
 
 
             // parse expiresIn from minute, hour, daily into milisecond
@@ -66,6 +66,7 @@ class AuthController {
                 code: 200,
                 message: "Berhasil Masuk",
                 accessToken: accessToken,
+                refreshToken: refreshToken,
                 expiresIn: expiresInInMilisecond,
                 tokenType: "Bearer",
                 user: {
@@ -126,6 +127,35 @@ class AuthController {
             return res.status(400).json({ message: error.message });
         }
     }
+
+    refreshToken = async (req,res)=>{
+        const refreshToken = req.body.refreshToken;
+        if(!refreshToken){
+          res.status(401).json({message:"REFRESH_TOKEN_REQUIRED"});
+        }
+      
+        const verified = jwt.verify(refreshToken,env.JWT_REFRESH_TOKEN_SECRET);
+       
+        try {
+          if(!verified){
+            throw { message:"UNAUTHORIZED" };
+          }
+          const userId=verified.userId;
+          const user = await Users.findOne({where:{id:userId}});
+          if(!user){
+            throw { message:"USER_NOT_FOUND" };
+          }
+          const { accessToken, refreshToken } = await this.generateToken(user);
+          return res.status(200).json({accessToken,refreshToken});
+        }catch(e){
+          if (e.message == "invalid token") {
+            e.message = "INVALID_TOKEN";
+          } else if (e.message == "jwt expired") {
+            e.message = "TOKEN_EXPIRED";
+          }
+          res.status(401).json({message:e.message});
+        }
+      }
 }
 
 module.exports = new AuthController();

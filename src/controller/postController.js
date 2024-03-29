@@ -79,7 +79,7 @@ class PostController {
 
   async store(req, res) {
     try {
-      const { title, description, status } = req.body;
+      const { title, description, categoryId, status } = req.body;
 
       // check title description and status if null
       if (!title || !description || !status) {
